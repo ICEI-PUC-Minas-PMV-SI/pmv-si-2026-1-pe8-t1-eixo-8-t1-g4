@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatórios — SSM</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <style>
+    /* === RELATÓRIOS === */
+    .filtros-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+    .filtros-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
+      align-items: end;
+    }
+    .filtros-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      box-shadow: var(--shadow-sm);
+      border-left: 4px solid var(--accent);
+    }
+    .kpi-card--ok    { border-left-color: var(--status-done); }
+    .kpi-card--warn  { border-left-color: var(--status-pending); }
+    .kpi-card--info  { border-left-color: var(--status-progress); }
+    .kpi-card--neutral { border-left-color: #94a3b8; }
+    .kpi-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.1;
+    }
+    .kpi-sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+    .relatorio-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .relatorio-card h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 14px;
+    }
+    .relatorio-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .relatorio-table th, .relatorio-table td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .relatorio-table th {
+      background: var(--surface-alt);
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: .05em;
+    }
+    .relatorio-table tr:hover td {
+      background: var(--surface-alt);
+    }
+    .barra-stack {
+      display: flex;
+      height: 28px;
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--surface-alt);
+    }
+    .barra-seg {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      transition: opacity .2s;
+    }
+    .barra-seg:hover { opacity: .85; }
+    .barra-seg--pendente  { background: var(--status-pending); }
+    .barra-seg--progresso { background: var(--status-progress); }
+    .barra-seg--concluida { background: var(--status-done); }
+    .legenda {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .legenda-item { display: flex; align-items: center; gap: 6px; }
+    .legenda-cor { width: 12px; height: 12px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+<script src="./js/auth.js"></script>
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">SSM</div>
+    <div>
+      <div class="logo-text">Sistema de Solicitação</div>
+      <div class="logo-sub">FlexPen Packaging</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="index.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Início
+    </a>
+    <a href="solicitarRota.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+      Solicitar
+    </a>
+    <a href="almoxarifado.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+      Almoxarifado
+    </a>
+    <a href="historico.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Histórico
+    </a>
+    <a href="relatorios.html" class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><polyline points="7 14 11 10 14 13 21 6"/></svg>
+      Relatórios
+    </a>
+  </nav>
+  <div class="sidebar-footer">Novo Nordisk — Eixo 8</div>
+</div>
+
+<div class="main">
+  <div class="page-header">
+    <div class="page-header-row">
+      <div>
+        <h1>Relatórios e Indicadores</h1>
+        <p>KPIs e análises do processo de solicitação de materiais</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═════════ FILTROS ═════════ -->
+  <div class="filtros-card">
+    <div class="filtros-grid">
+      <div class="form-group">
+        <label class="form-label" for="filtroDataInicio">Data início</label>
+        <input type="date" id="filtroDataInicio" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="filtroDataFim">Data fim</label>
+        <input type="date" id="filtroDataFim" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="filtroLinha">Linha</label>
+        <select id="filtroLinha" class="form-input">
+          <option value="todas">Todas as linhas</option>
+          <option value="Linha A">Linha A</option>
+          <option value="Linha B">Linha B</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="filtroStatus">Status</label>
+        <select id="filtroStatus" class="form-input">
+          <option value="todos">Todos os status</option>
+          <option value="pendente">Pendente</option>
+          <option value="em progresso">Em progresso</option>
+          <option value="concluída">Concluída</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="filtroMaterial">Material</label>
+        <select id="filtroMaterial" class="form-input">
+          <option value="todos">Todos os materiais</option>
+          <option value="cartucho">Cartucho</option>
+          <option value="bula">Bula</option>
+          <option value="rotulo">Rótulo</option>
+          <option value="caixa">Caixa</option>
+        </select>
+      </div>
+    </div>
+    <div class="filtros-actions">
+      <button class="btn btn-primary" id="btnAplicar">Aplicar filtros</button>
+      <button class="btn btn-ghost" id="btnLimpar">Limpar</button>
+      <button class="btn btn-success" id="btnExportar">Exportar CSV</button>
+    </div>
+  </div>
+
+  <!-- ═════════ KPIs ═════════ -->
+  <div class="kpi-grid">
+    <div class="kpi-card kpi-card--info">
+      <div class="kpi-label">Total de Solicitações</div>
+      <div class="kpi-value" id="kpiTotal">—</div>
+      <div class="kpi-sub" id="kpiTotalSub">no período filtrado</div>
+    </div>
+    <div class="kpi-card kpi-card--ok">
+      <div class="kpi-label">Tempo Médio de Atendimento</div>
+      <div class="kpi-value" id="kpiTempoMedio">—</div>
+      <div class="kpi-sub">do registro à conclusão</div>
+    </div>
+    <div class="kpi-card kpi-card--warn">
+      <div class="kpi-label">Taxa de Problemas Reportados</div>
+      <div class="kpi-value" id="kpiTaxaProblema">—</div>
+      <div class="kpi-sub" id="kpiTaxaProblemaSub">solicitações com problema</div>
+    </div>
+    <div class="kpi-card kpi-card--neutral">
+      <div class="kpi-label">Taxa de Conclusão</div>
+      <div class="kpi-value" id="kpiTaxaConclusao">—</div>
+      <div class="kpi-sub" id="kpiTaxaConclusaoSub">do total de pedidos</div>
+    </div>
+  </div>
+
+  <!-- ═════════ DISTRIBUIÇÃO POR STATUS ═════════ -->
+  <div class="relatorio-card">
+    <h2>Distribuição por Status</h2>
+    <div class="barra-stack" id="barraStatus"></div>
+    <div class="legenda">
+      <div class="legenda-item"><span class="legenda-cor" style="background:var(--status-pending);"></span> Pendente</div>
+      <div class="legenda-item"><span class="legenda-cor" style="background:var(--status-progress);"></span> Em progresso</div>
+      <div class="legenda-item"><span class="legenda-cor" style="background:var(--status-done);"></span> Concluída</div>
+    </div>
+  </div>
+
+  <!-- ═════════ POR LINHA ═════════ -->
+  <div class="relatorio-card">
+    <h2>Solicitações por Linha Produtiva</h2>
+    <table class="relatorio-table">
+      <thead>
+        <tr>
+          <th>Linha</th>
+          <th>Total</th>
+          <th>Pendentes</th>
+          <th>Em progresso</th>
+          <th>Concluídas</th>
+          <th>Com problema</th>
+        </tr>
+      </thead>
+      <tbody id="tabelaLinha"></tbody>
+    </table>
+  </div>
+
+  <!-- ═════════ POR MATERIAL ═════════ -->
+  <div class="relatorio-card">
+    <h2>Volume por Material</h2>
+    <table class="relatorio-table">
+      <thead>
+        <tr>
+          <th>Material</th>
+          <th>Solicitações</th>
+          <th>Quantidade total</th>
+          <th>Quantidade média por pedido</th>
+        </tr>
+      </thead>
+      <tbody id="tabelaMaterial"></tbody>
+    </table>
+  </div>
+
+  <!-- ═════════ DETALHADO ═════════ -->
+  <div class="relatorio-card">
+    <h2>Detalhamento das Solicitações</h2>
+    <div style="overflow-x:auto;">
+      <table class="relatorio-table">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Solicitante</th>
+            <th>Linha</th>
+            <th>Materiais</th>
+            <th>Status</th>
+            <th>Tempo de atendimento</th>
+            <th>Problema</th>
+          </tr>
+        </thead>
+        <tbody id="tabelaDetalhada"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  let todasSolicitacoes = [];
+  let solicitacoesFiltradas = [];
+
+  // === Carrega dados ===
+  async function carregar() {
+    try {
+      const res = await fetch('http://localhost:3000/solicitacoes');
+      if (!res.ok) throw new Error('Erro ao carregar');
+      todasSolicitacoes = await res.json();
+      aplicarFiltros();
+    } catch (err) {
+      document.getElementById('kpiTotal').textContent = '—';
+      alert('Erro ao conectar com o servidor. Verifique se o backend está rodando.');
+    }
+  }
+
+  // === Aplica filtros ===
+  function aplicarFiltros() {
+    const dataInicio = document.getElementById('filtroDataInicio').value;
+    const dataFim    = document.getElementById('filtroDataFim').value;
+    const linha      = document.getElementById('filtroLinha').value;
+    const status     = document.getElementById('filtroStatus').value;
+    const material   = document.getElementById('filtroMaterial').value;
+
+    solicitacoesFiltradas = todasSolicitacoes.filter(s => {
+      const data = new Date(s.dataSolicitacao);
+      if (dataInicio && data < new Date(dataInicio + 'T00:00:00')) return false;
+      if (dataFim    && data > new Date(dataFim    + 'T23:59:59')) return false;
+      if (linha    !== 'todas'  && s.linha  !== linha)  return false;
+      if (status   !== 'todos'  && s.status !== status) return false;
+      if (material !== 'todos'  && (!s.materiais || !s.materiais[material] || s.materiais[material] <= 0)) return false;
+      return true;
+    });
+
+    renderTudo();
+  }
+
+  function limparFiltros() {
+    document.getElementById('filtroDataInicio').value = '';
+    document.getElementById('filtroDataFim').value    = '';
+    document.getElementById('filtroLinha').value      = 'todas';
+    document.getElementById('filtroStatus').value     = 'todos';
+    document.getElementById('filtroMaterial').value   = 'todos';
+    aplicarFiltros();
+  }
+
+  // === Renderização principal ===
+  function renderTudo() {
+    renderKPIs();
+    renderBarraStatus();
+    renderTabelaLinha();
+    renderTabelaMaterial();
+    renderTabelaDetalhada();
+  }
+
+  function renderKPIs() {
+    const total = solicitacoesFiltradas.length;
+    document.getElementById('kpiTotal').textContent = total;
+
+    // Tempo médio de atendimento (entre dataSolicitacao e dataAtendimento, em minutos)
+    const concluidas = solicitacoesFiltradas.filter(s =>
+      s.status === 'concluída' && s.dataAtendimento
+    );
+    let tempoMedioStr = '—';
+    if (concluidas.length > 0) {
+      const totalMs = concluidas.reduce((acc, s) =>
+        acc + (new Date(s.dataAtendimento) - new Date(s.dataSolicitacao)), 0);
+      const mediaMin = totalMs / concluidas.length / 60000;
+      tempoMedioStr = mediaMin < 60
+        ? `${mediaMin.toFixed(1)} min`
+        : `${(mediaMin / 60).toFixed(1)} h`;
+    }
+    document.getElementById('kpiTempoMedio').textContent = tempoMedioStr;
+
+    // Taxa de problemas
+    const comProblema = solicitacoesFiltradas.filter(s => s.problema && s.problema.trim()).length;
+    const taxaProb = total > 0 ? (comProblema / total * 100) : 0;
+    document.getElementById('kpiTaxaProblema').textContent = `${taxaProb.toFixed(1)}%`;
+    document.getElementById('kpiTaxaProblemaSub').textContent =
+      `${comProblema} de ${total} solicitações`;
+
+    // Taxa de conclusão
+    const totalConcluidas = solicitacoesFiltradas.filter(s => s.status === 'concluída').length;
+    const taxaConcl = total > 0 ? (totalConcluidas / total * 100) : 0;
+    document.getElementById('kpiTaxaConclusao').textContent = `${taxaConcl.toFixed(1)}%`;
+    document.getElementById('kpiTaxaConclusaoSub').textContent =
+      `${totalConcluidas} concluídas de ${total}`;
+  }
+
+  function renderBarraStatus() {
+    const total = solicitacoesFiltradas.length;
+    const barra = document.getElementById('barraStatus');
+    if (total === 0) {
+      barra.innerHTML = '<div style="color:var(--text-muted);padding:6px 12px;font-size:12px;">Sem dados</div>';
+      return;
+    }
+    const pend = solicitacoesFiltradas.filter(s => s.status === 'pendente').length;
+    const prog = solicitacoesFiltradas.filter(s => s.status === 'em progresso').length;
+    const conc = solicitacoesFiltradas.filter(s => s.status === 'concluída').length;
+    const segs = [];
+    if (pend > 0) segs.push(`<div class="barra-seg barra-seg--pendente"  style="width:${pend/total*100}%" title="Pendente: ${pend}">${pend}</div>`);
+    if (prog > 0) segs.push(`<div class="barra-seg barra-seg--progresso" style="width:${prog/total*100}%" title="Em progresso: ${prog}">${prog}</div>`);
+    if (conc > 0) segs.push(`<div class="barra-seg barra-seg--concluida" style="width:${conc/total*100}%" title="Concluída: ${conc}">${conc}</div>`);
+    barra.innerHTML = segs.join('');
+  }
+
+  function renderTabelaLinha() {
+    const linhas = ['Linha A', 'Linha B'];
+    const tbody = document.getElementById('tabelaLinha');
+    tbody.innerHTML = linhas.map(linha => {
+      const subset = solicitacoesFiltradas.filter(s => s.linha === linha);
+      return `
+        <tr>
+          <td><strong>${linha}</strong></td>
+          <td>${subset.length}</td>
+          <td>${subset.filter(s => s.status === 'pendente').length}</td>
+          <td>${subset.filter(s => s.status === 'em progresso').length}</td>
+          <td>${subset.filter(s => s.status === 'concluída').length}</td>
+          <td>${subset.filter(s => s.problema && s.problema.trim()).length}</td>
+        </tr>`;
+    }).join('');
+  }
+
+  function renderTabelaMaterial() {
+    const materiais = [
+      { key: 'cartucho', label: 'Cartucho' },
+      { key: 'bula',     label: 'Bula' },
+      { key: 'rotulo',   label: 'Rótulo' },
+      { key: 'caixa',    label: 'Caixa' },
+    ];
+    const tbody = document.getElementById('tabelaMaterial');
+    tbody.innerHTML = materiais.map(m => {
+      const subset = solicitacoesFiltradas.filter(s =>
+        s.materiais && s.materiais[m.key] && s.materiais[m.key] > 0);
+      const totalQtd = subset.reduce((acc, s) => acc + Number(s.materiais[m.key] || 0), 0);
+      const media = subset.length > 0 ? (totalQtd / subset.length) : 0;
+      return `
+        <tr>
+          <td><strong>${m.label}</strong></td>
+          <td>${subset.length}</td>
+          <td>${totalQtd}</td>
+          <td>${media.toFixed(1)}</td>
+        </tr>`;
+    }).join('');
+  }
+
+  function renderTabelaDetalhada() {
+    const tbody = document.getElementById('tabelaDetalhada');
+    if (solicitacoesFiltradas.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:20px;">Nenhuma solicitação encontrada para os filtros aplicados.</td></tr>';
+      return;
+    }
+    const ordenadas = [...solicitacoesFiltradas].sort(
+      (a, b) => new Date(b.dataSolicitacao) - new Date(a.dataSolicitacao)
+    );
+    tbody.innerHTML = ordenadas.map(s => {
+      const data = new Date(s.dataSolicitacao).toLocaleString('pt-BR');
+      const m = s.materiais || {};
+      const matStr = [
+        m.cartucho > 0 ? `Cartucho: ${m.cartucho}` : null,
+        m.bula     > 0 ? `Bula: ${m.bula}` : null,
+        m.rotulo   > 0 ? `Rótulo: ${m.rotulo}` : null,
+        m.caixa    > 0 ? `Caixa: ${m.caixa}` : null,
+      ].filter(Boolean).join(', ') || '—';
+      let tempo = '—';
+      if (s.dataAtendimento) {
+        const min = (new Date(s.dataAtendimento) - new Date(s.dataSolicitacao)) / 60000;
+        tempo = min < 60 ? `${min.toFixed(1)} min` : `${(min / 60).toFixed(1)} h`;
+      }
+      return `
+        <tr>
+          <td>${data}</td>
+          <td>${s.solicitante || '—'}</td>
+          <td>${s.linha}</td>
+          <td>${matStr}</td>
+          <td><span class="badge badge--${s.status === 'pendente' ? 'pending' : (s.status === 'em progresso' ? 'progress' : 'done')}">${s.status}</span></td>
+          <td>${tempo}</td>
+          <td>${s.problema ? `⚠️ ${s.problema}` : '—'}</td>
+        </tr>`;
+    }).join('');
+  }
+
+  // === Exportar CSV ===
+  function exportarCSV() {
+    if (solicitacoesFiltradas.length === 0) {
+      alert('Não há dados para exportar com os filtros atuais.');
+      return;
+    }
+    const cabecalho = [
+      'Data Solicitação', 'Solicitante', 'Linha', 'Cartucho', 'Bula', 'Rótulo', 'Caixa',
+      'Status', 'Data Atendimento', 'Tempo (min)', 'Observações', 'Problema'
+    ];
+    const linhas = solicitacoesFiltradas.map(s => {
+      const m = s.materiais || {};
+      let tempoMin = '';
+      if (s.dataAtendimento) {
+        tempoMin = ((new Date(s.dataAtendimento) - new Date(s.dataSolicitacao)) / 60000).toFixed(1);
+      }
+      return [
+        new Date(s.dataSolicitacao).toLocaleString('pt-BR'),
+        s.solicitante || '',
+        s.linha || '',
+        m.cartucho || 0,
+        m.bula || 0,
+        m.rotulo || 0,
+        m.caixa || 0,
+        s.status || '',
+        s.dataAtendimento ? new Date(s.dataAtendimento).toLocaleString('pt-BR') : '',
+        tempoMin,
+        (s.observacoes || '').replace(/[\r\n;,"]/g, ' '),
+        (s.problema    || '').replace(/[\r\n;,"]/g, ' ')
+      ];
+    });
+    const csv = [cabecalho, ...linhas]
+      .map(row => row.map(v => `"${String(v).replace(/"/g, '""')}"`).join(';'))
+      .join('\n');
+    // BOM para Excel reconhecer UTF-8
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const dataStr = new Date().toISOString().split('T')[0];
+    link.href = url;
+    link.download = `relatorio-ssm-${dataStr}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // === Eventos ===
+  document.getElementById('btnAplicar').addEventListener('click', aplicarFiltros);
+  document.getElementById('btnLimpar').addEventListener('click', limparFiltros);
+  document.getElementById('btnExportar').addEventListener('click', exportarCSV);
+
+  carregar();
+</script>
+
+</body>
+</html>

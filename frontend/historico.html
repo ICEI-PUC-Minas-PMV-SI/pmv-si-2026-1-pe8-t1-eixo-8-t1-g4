@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Histórico — SSM</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<script src="./js/auth.js"></script>
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">SSM</div>
+    <div>
+      <div class="logo-text">Sistema de Solicitação</div>
+      <div class="logo-sub">FlexPen Packaging</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="index.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Início
+    </a>
+    <a href="solicitarRota.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+      Solicitar
+    </a>
+    <a href="almoxarifado.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+      Almoxarifado
+    </a>
+    <a href="historico.html" class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Histórico
+    </a>
+    <a href="relatorios.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><polyline points="7 14 11 10 14 13 21 6"/></svg>
+      Relatórios
+    </a>
+  </nav>
+  <div class="sidebar-footer">Novo Nordisk — Eixo 8</div>
+</div>
+
+<div class="main">
+  <div class="page-header">
+    <div class="page-header-row">
+      <div>
+        <h1>Histórico de Solicitações</h1>
+        <p>Registro completo de todas as solicitações</p>
+      </div>
+      <div class="form-group" style="flex-direction:row;align-items:center;gap:8px;">
+        <label class="form-label" style="white-space:nowrap;margin:0;">Filtrar linha:</label>
+        <select id="filtroLinha" class="form-input" style="width:auto;">
+          <option value="todas">Todas as linhas</option>
+          <option value="Linha A">Linha A</option>
+          <option value="Linha B">Linha B</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div id="historico"></div>
+</div>
+
+<script>
+  let todasSolicitacoes = [];
+
+  function statusClass(status) {
+    if (status === 'pendente') return 'pending';
+    if (status === 'em progresso') return 'progress';
+    return 'done';
+  }
+
+  function renderCard(s) {
+    const sc = statusClass(s.status);
+    const materiais = s.materiais || {};
+    const tags = [
+      materiais.cartucho > 0 ? `Cartucho: ${materiais.cartucho}` : '',
+      materiais.bula > 0 ? `Bula: ${materiais.bula}` : '',
+      materiais.rotulo > 0 ? `Rótulo: ${materiais.rotulo}` : '',
+      materiais.caixa > 0 ? `Caixa: ${materiais.caixa}` : '',
+    ].filter(Boolean).map(t => `<span class="material-tag">${t}</span>`).join('');
+
+    const data = new Date(s.dataSolicitacao).toLocaleString('pt-BR');
+    const dataAtend = s.dataAtendimento
+      ? `<span>✔ ${new Date(s.dataAtendimento).toLocaleString('pt-BR')}</span>` : '';
+
+    return `
+      <div class="request-card">
+        <div class="request-card__header request-card__header--${sc}">
+          <span class="request-card__title">${s.linha}</span>
+          <span class="badge badge--${sc}">${s.status}</span>
+        </div>
+        <div class="request-card__body">
+          <div class="request-card__meta">
+            <span>👤 ${s.solicitante || '—'}</span>
+            <span>🕐 ${data}</span>
+            ${dataAtend}
+          </div>
+          <div class="request-card__materials">${tags || '<span class="material-tag" style="color:var(--text-muted)">Sem materiais</span>'}</div>
+          ${s.observacoes ? `<div class="request-card__obs">"${s.observacoes}"</div>` : ''}
+        </div>
+      </div>
+      ${s.problema ? `
+      <div class="request-card__problema">
+        <span class="request-card__problema-icon">⚠️</span>
+        <div class="request-card__problema-body">
+          <div class="request-card__problema-label">Problema Reportado pelo Almoxarifado</div>
+          <div class="request-card__problema-text">${s.problema}</div>
+        </div>
+      </div>` : ''}
+    </div>
+    `;
+  }
+
+  function render() {
+    const filtro = document.getElementById('filtroLinha').value;
+    const container = document.getElementById('historico');
+    const filtradas = filtro === 'todas'
+      ? todasSolicitacoes
+      : todasSolicitacoes.filter(s => s.linha === filtro);
+
+    if (filtradas.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <h3>Nenhuma solicitação encontrada</h3>
+          <p>Ainda não há registros para o filtro selecionado.</p>
+        </div>`;
+      return;
+    }
+    container.innerHTML = filtradas.map(renderCard).join('');
+  }
+
+  document.getElementById('filtroLinha').addEventListener('change', render);
+
+  fetch('http://localhost:3000/solicitacoes')
+    .then(r => r.json())
+    .then(lista => {
+      todasSolicitacoes = lista.sort(
+        (a, b) => new Date(b.dataSolicitacao) - new Date(a.dataSolicitacao)
+      );
+      render();
+    })
+    .catch(() => {
+      document.getElementById('historico').innerHTML = `
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <h3>Erro ao carregar</h3>
+          <p>Verifique se o servidor está rodando em http://localhost:3000</p>
+        </div>`;
+    });
+</script>
+
+</body>
+</html>

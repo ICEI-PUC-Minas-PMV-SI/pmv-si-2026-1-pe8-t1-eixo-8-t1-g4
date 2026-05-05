@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solicitar Materiais — SSM</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<script src="./js/auth.js"></script>
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">SSM</div>
+    <div>
+      <div class="logo-text">Sistema de Solicitação</div>
+      <div class="logo-sub">FlexPen Packaging</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="index.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Início
+    </a>
+    <a href="solicitarRota.html" class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+      Solicitar
+    </a>
+    <a href="almoxarifado.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+      Almoxarifado
+    </a>
+    <a href="historico.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Histórico
+    </a>
+    <a href="relatorios.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><polyline points="7 14 11 10 14 13 21 6"/></svg>
+      Relatórios
+    </a>
+  </nav>
+  <div class="sidebar-footer">Novo Nordisk — Eixo 8</div>
+</div>
+
+<div class="main">
+  <div class="page-header">
+    <h1>Solicitar Materiais</h1>
+    <p>FlexPen Packaging — Eixo 8</p>
+  </div>
+
+  <div id="alertasProblemas"></div>
+
+  <form id="form">
+    <div class="form-section">
+      <div class="form-section-title">Informações da Solicitação</div>
+      <div class="info-card">
+        <div class="info-row">
+          <div class="form-group">
+            <label class="form-label">Iniciais</label>
+            <input type="text" id="iniciais" class="form-input" maxlength="5" placeholder="Ex: MT" style="width:110px; text-transform:uppercase;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Linha</label>
+            <div class="line-selector">
+              <label class="line-option">
+                <input type="radio" name="linha" value="Linha A" checked>
+                <span>Linha A</span>
+              </label>
+              <label class="line-option">
+                <input type="radio" name="linha" value="Linha B">
+                <span>Linha B</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">Materiais</div>
+      <div class="materials-list">
+
+        <div class="material-row">
+          <div class="material-info">
+            <img src="./img/cartucho.png" alt="Cartucho">
+            <span class="material-name">Cartuchos</span>
+          </div>
+          <div class="qty-control">
+            <button type="button" class="qty-btn" onclick="menos('cartucho')">−</button>
+            <input type="number" id="cartucho" class="qty-input" value="0" min="0">
+            <button type="button" class="qty-btn qty-btn--plus" onclick="mais('cartucho')">+</button>
+            <span class="qty-unit">caixa</span>
+          </div>
+        </div>
+
+        <div class="material-row">
+          <div class="material-info">
+            <img src="./img/bula.png" alt="Bula">
+            <span class="material-name">Bulas</span>
+          </div>
+          <div class="qty-control">
+            <button type="button" class="qty-btn" onclick="menos('bula')">−</button>
+            <input type="number" id="bula" class="qty-input" value="0" min="0">
+            <button type="button" class="qty-btn qty-btn--plus" onclick="mais('bula')">+</button>
+            <span class="qty-unit">caixa</span>
+          </div>
+        </div>
+
+        <div class="material-row">
+          <div class="material-info">
+            <img src="./img/rotulo.png" alt="Rótulo">
+            <span class="material-name">Rótulo Caneta</span>
+          </div>
+          <div class="qty-control">
+            <button type="button" class="qty-btn" onclick="menos('rotulo')">−</button>
+            <input type="number" id="rotulo" class="qty-input" value="0" min="0">
+            <button type="button" class="qty-btn qty-btn--plus" onclick="mais('rotulo')">+</button>
+            <span class="qty-unit">caixa</span>
+          </div>
+        </div>
+
+        <div class="material-row">
+          <div class="material-info">
+            <img src="./img/caixa.png" alt="Caixa">
+            <span class="material-name">Caixa de Embarque</span>
+          </div>
+          <div class="qty-control">
+            <button type="button" class="qty-btn" onclick="menos('caixa')">−</button>
+            <input type="number" id="caixa" class="qty-input" value="0" min="0">
+            <button type="button" class="qty-btn qty-btn--plus" onclick="mais('caixa')">+</button>
+            <span class="qty-unit">fardo</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">Observações</div>
+      <textarea id="obs" class="form-textarea" placeholder="Informações adicionais (opcional)..."></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-full" id="btnEnviar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      Enviar Solicitação
+    </button>
+  </form>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="./js/app.js"></script>
+</body>
+</html>

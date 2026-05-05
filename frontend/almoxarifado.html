@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Almoxarifado — SSM</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<script src="./js/auth.js"></script>
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">SSM</div>
+    <div>
+      <div class="logo-text">Sistema de Solicitação</div>
+      <div class="logo-sub">FlexPen Packaging</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="index.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Início
+    </a>
+    <a href="solicitarRota.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+      Solicitar
+    </a>
+    <a href="almoxarifado.html" class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+      Almoxarifado
+    </a>
+    <a href="historico.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Histórico
+    </a>
+    <a href="relatorios.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><polyline points="7 14 11 10 14 13 21 6"/></svg>
+      Relatórios
+    </a>
+  </nav>
+  <div class="sidebar-footer">Novo Nordisk — Eixo 8</div>
+</div>
+
+<div class="main">
+  <div class="page-header">
+    <div class="page-header-row">
+      <div>
+        <h1>Almoxarifado</h1>
+        <p>Painel de Solicitações em Tempo Real</p>
+      </div>
+      <button class="btn btn-ghost" id="btnAtualizar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+        Atualizar
+      </button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card stat-card--pending">
+      <div class="stat-label">Pendentes</div>
+      <div class="stat-value" id="countPendentes">0</div>
+    </div>
+    <div class="stat-card stat-card--progress">
+      <div class="stat-label">Em Progresso</div>
+      <div class="stat-value" id="countProgresso">0</div>
+    </div>
+    <div class="stat-card stat-card--done">
+      <div class="stat-label">Concluídas</div>
+      <div class="stat-value" id="countConcluidas">0</div>
+    </div>
+    <div class="stat-card stat-card--justificada">
+  <div class="stat-label">Justificadas</div>
+  <div class="stat-value" id="countJustificadas">0</div>
+</div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="todas">Todas</button>
+    <button class="filter-btn" data-filter="pendente">Pendentes</button>
+    <button class="filter-btn" data-filter="em progresso">Em Progresso</button>
+    <button class="filter-btn" data-filter="concluída">Concluídas</button>
+    <button class="filter-btn" data-filter="justificada">Justificadas</button>
+  </div>
+
+  <div id="lista"></div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Modal: Reportar Problema -->
+<div class="modal-overlay hidden" id="modalProblema">
+  <div class="modal">
+    <div class="modal__title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:22px;height:22px;flex-shrink:0;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Reportar Problema
+    </div>
+    <p class="modal__subtitle">Descreva o problema encontrado. A justificativa ficará visível para o solicitante.</p>
+    <div class="form-group">
+      <label class="form-label" for="inputProblema">Justificativa</label>
+      <textarea class="form-textarea" id="inputProblema" placeholder="Ex: Material sem estoque, embalagem danificada..." rows="4"></textarea>
+    </div>
+    <div class="modal__actions">
+      <button class="btn btn-ghost" onclick="fecharModal()">Cancelar</button>
+      <button class="btn btn-danger" onclick="confirmarProblema()">Reportar</button>
+    </div>
+  </div>
+</div>
+
+<script src="./js/almoxarifado.js"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solicitar Itens — SSM</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<!--<script src="./js/auth.js"></script>//-->
+
+<div class="form-section">
+  <div class="form-section-title">Materiais</div>
+  <div class="materials-list">
+
+    <!-- FLEXPEN -->
+    <div class="material-row">
+      <div class="material-info">
+        <img src="./img/flexpen.png" alt="FlexPen">
+        <span class="material-name">Caneta FlexPen</span>
+      </div>
+      <div class="qty-control">
+        <button type="button" class="qty-btn" onclick="menos('flexpen')">−</button>
+        <input type="number" id="flexpen" class="qty-input" value="0" min="0">
+        <button type="button" class="qty-btn qty-btn--plus" onclick="mais('flexpen')">+</button>
+        <span class="qty-unit">unid</span>
+      </div>
+    </div>
+
+    <!-- PALLET -->
+    <div class="material-row">
+      <div class="material-info">
+        <img src="./img/pallet.png" alt="Pallet">
+        <span class="material-name">Pallet de Madeira</span>
+      </div>
+      <div class="qty-control">
+        <button type="button" class="qty-btn" onclick="menos('pallet')">−</button>
+        <input type="number" id="pallet" class="qty-input" value="0" min="0">
+        <button type="button" class="qty-btn qty-btn--plus" onclick="mais('pallet')">+</button>
+        <span class="qty-unit">unid</span>
+      </div>
+    </div>
+
+    <!-- BASE -->
+    <div class="material-row">
+      <div class="material-info">
+        <img src="./img/base.png" alt="Base">
+        <span class="material-name">Base de Caneta</span>
+      </div>
+      <div class="qty-control">
+        <button type="button" class="qty-btn" onclick="menos('base')">−</button>
+        <input type="number" id="base" class="qty-input" value="0" min="0">
+        <button type="button" class="qty-btn qty-btn--plus" onclick="mais('base')">+</button>
+        <span class="qty-unit">unid</span>
+      </div>
+    </div>
+
+  </div>
+</div>

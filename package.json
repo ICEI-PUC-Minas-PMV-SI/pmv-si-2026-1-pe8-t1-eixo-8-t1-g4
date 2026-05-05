@@ -1,0 +1,30 @@
+{
+  "linha": "Linha A",
+  "materiais": {
+    "cartucho": 10,
+    "bula": 5,
+    "rotulo": 2,
+    "caixa": 3
+  },
+  "observacoes": "Urgente",
+  "status": "pendente",
+  "solicitante": "petronio neves",
+  "dataSolicitacao": "2026-03-27T10:00:00",
+  "dataAtendimento": null,
+  "name": "controle-de-rotas-flxpen-packaging---eixo-8",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "mongoose": "^9.3.3"
+  }
+}
