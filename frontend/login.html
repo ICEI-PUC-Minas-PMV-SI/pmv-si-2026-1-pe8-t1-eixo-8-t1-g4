@@ -516,7 +516,7 @@
         </div>
         <div class="card-title">Solicitação</div>
         <div class="card-desc">Operador de linha<br>Solicitar e acompanhar materiais</div>
-        <div class="card-pwd" id="pwd-operador">
+        <div class="card-pwd" id="pwd-operador" style="display:none;">
           <div class="pwd-inner" onclick="event.stopPropagation()">
             <input type="password" id="input-operador" class="pwd-input" placeholder="Senha..." autocomplete="off">
             <button class="pwd-btn" style="background:linear-gradient(135deg,#0056a4,#0072ce);"
@@ -539,7 +539,7 @@
         </div>
         <div class="card-title">Almoxarifado</div>
         <div class="card-desc">Almoxarife<br>Gerenciar e atender solicitações</div>
-        <div class="card-pwd" id="pwd-almoxarife">
+        <div class="card-pwd" id="pwd-almoxarife" style="display:none;">
           <div class="pwd-inner" onclick="event.stopPropagation()">
             <input type="password" id="input-almoxarife" class="pwd-input" placeholder="Senha..." autocomplete="off">
             <button class="pwd-btn" style="background:linear-gradient(135deg,#138a3a,#22c55e);"
@@ -665,34 +665,51 @@
   let roleSelecionado = null;
 
   // Clique no card
-  document.querySelectorAll('.card').forEach(function(card) {
-    card.addEventListener('click', function() {
-      const role = this.dataset.role;
-      if (roleSelecionado === role) return;
+document.querySelectorAll('.card').forEach(function(card) {
+  card.addEventListener('click', function() {
 
-      // Desfaz seleção anterior
-      if (roleSelecionado) {
-        document.getElementById('card-' + roleSelecionado).classList.remove('card--active');
-        document.getElementById('pwd-' + roleSelecionado).classList.remove('pwd--open');
-        document.getElementById('err-' + roleSelecionado).classList.remove('err--visible');
-        document.getElementById('input-' + roleSelecionado).value = '';
-      }
+    const role = this.dataset.role;
 
-      roleSelecionado = role;
-      this.classList.add('card--active');
+    // OPERADOR → entra direto
+    if (role === 'operador') {
+      sessionStorage.setItem('ssm_role', role);
+      window.location.href = 'index.html';
+      return;
+    }
 
-      // Diminui os outros cards
-      document.querySelectorAll('.card').forEach(function(c) {
-        if (c.dataset.role !== role) c.classList.add('card--dimmed');
-        else                          c.classList.remove('card--dimmed');
-      });
+    // ALMOXARIFE → entra direto
+    if (role === 'almoxarife') {
+      sessionStorage.setItem('ssm_role', role);
+      window.location.href = 'index.html';
+      return;
+    }
 
-      document.getElementById('pwd-' + role).classList.add('pwd--open');
-      setTimeout(function() {
-        document.getElementById('input-' + role).focus();
-      }, 320);
+    // ADMIN continua com senha
+    if (roleSelecionado === role) return;
+
+    if (roleSelecionado) {
+      document.getElementById('card-' + roleSelecionado).classList.remove('card--active');
+      document.getElementById('pwd-' + roleSelecionado).classList.remove('pwd--open');
+      document.getElementById('err-' + roleSelecionado).classList.remove('err--visible');
+      document.getElementById('input-' + roleSelecionado).value = '';
+    }
+
+    roleSelecionado = role;
+    this.classList.add('card--active');
+
+    document.querySelectorAll('.card').forEach(function(c) {
+      if (c.dataset.role !== role) c.classList.add('card--dimmed');
+      else c.classList.remove('card--dimmed');
     });
+
+    document.getElementById('pwd-' + role).classList.add('pwd--open');
+
+    setTimeout(function() {
+      document.getElementById('input-' + role).focus();
+    }, 320);
+
   });
+});
 
   // Enter no input
   document.querySelectorAll('.pwd-input').forEach(function(input) {
