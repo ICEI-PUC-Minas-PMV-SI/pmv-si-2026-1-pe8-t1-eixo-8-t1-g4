@@ -488,7 +488,7 @@
 </div>
 <div class="grid-overlay"></div>
 
-<!-- ═══════════════ LOGIN SCREEN ═══════════════ -->
+<!-- LOGIN SCREEN -->
 <div id="screen-login">
   <div class="login-center">
 
@@ -516,16 +516,7 @@
         </div>
         <div class="card-title">Solicitação</div>
         <div class="card-desc">Operador de linha<br>Solicitar e acompanhar materiais</div>
-        <div class="card-pwd" id="pwd-operador" style="display:none;">
-          <div class="pwd-inner" onclick="event.stopPropagation()">
-            <input type="password" id="input-operador" class="pwd-input" placeholder="Senha..." autocomplete="off">
-            <button class="pwd-btn" style="background:linear-gradient(135deg,#0056a4,#0072ce);"
-                    onclick="doLogin(event,'operador')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" style="width:16px;height:16px;"><polyline points="9 18 15 12 9 6"/></svg>
-            </button>
-          </div>
-          <div class="pwd-err" id="err-operador">Senha incorreta. Tente novamente.</div>
-        </div>
+
       </div>
 
       <!-- Almoxarife -->
@@ -539,16 +530,7 @@
         </div>
         <div class="card-title">Almoxarifado</div>
         <div class="card-desc">Almoxarife<br>Gerenciar e atender solicitações</div>
-        <div class="card-pwd" id="pwd-almoxarife" style="display:none;">
-          <div class="pwd-inner" onclick="event.stopPropagation()">
-            <input type="password" id="input-almoxarife" class="pwd-input" placeholder="Senha..." autocomplete="off">
-            <button class="pwd-btn" style="background:linear-gradient(135deg,#138a3a,#22c55e);"
-                    onclick="doLogin(event,'almoxarife')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" style="width:16px;height:16px;"><polyline points="9 18 15 12 9 6"/></svg>
-            </button>
-          </div>
-          <div class="pwd-err" id="err-almoxarife">Senha incorreta. Tente novamente.</div>
-        </div>
+        
       </div>
 
       <!-- Admin -->
@@ -577,7 +559,7 @@
 </div><!-- /screen-login -->
 
 
-<!-- ═══════════════ WELCOME — OPERADOR ═══════════════ -->
+<!-- WELCOME — OPERADOR -->
 <div class="welcome" id="ws-operador">
   <div class="ws-glow" style="--r:0;--g:114;--b:206;"></div>
   <div class="ws-body">
@@ -602,7 +584,7 @@
   </div>
 </div>
 
-<!-- ═══════════════ WELCOME — ALMOXARIFE ═══════════════ -->
+<!-- WELCOME — ALMOXARIFE  -->
 <div class="welcome" id="ws-almoxarife">
   <div class="ws-glow" style="--r:22;--g:163;--b:74;"></div>
   <div class="ws-body">
@@ -626,7 +608,7 @@
   </div>
 </div>
 
-<!-- ═══════════════ WELCOME — ADMIN ═══════════════ -->
+<!-- WELCOME — ADMIN -->
 <div class="welcome" id="ws-admin">
   <div class="ws-glow" style="--r:217;--g:119;--b:6;"></div>
   <div class="ws-body">
@@ -650,68 +632,55 @@
 
 
 <script>
-  // ── SENHAS — altere aqui conforme necessário ──
   const SENHAS = {
-    operador:   '1234',
-    almoxarife: '4321',
-    admin:      'admin'
+    admin: 'admin'
   };
 
-  // Se já está logado, vai direto
   if (sessionStorage.getItem('ssm_role')) {
     window.location.replace('index.html');
   }
 
   let roleSelecionado = null;
 
-  // Clique no card
-document.querySelectorAll('.card').forEach(function(card) {
-  card.addEventListener('click', function() {
+  document.querySelectorAll('.card').forEach(function(card) {
+    card.addEventListener('click', function() {
 
-    const role = this.dataset.role;
+      const role = this.dataset.role;
 
-    // OPERADOR → entra direto
-    if (role === 'operador') {
-      sessionStorage.setItem('ssm_role', role);
-      window.location.href = 'index.html';
-      return;
-    }
+      // OPERADOR E ALMOXARIFE = SEM SENHA
+      if (role === 'operador' || role === 'almoxarife') {
+        iniciarSistema(role);
+        return;
+      }
 
-    // ALMOXARIFE → entra direto
-    if (role === 'almoxarife') {
-      sessionStorage.setItem('ssm_role', role);
-      window.location.href = 'index.html';
-      return;
-    }
+      // ADMIN COM SENHA
+      if (roleSelecionado === role) return;
 
-    // ADMIN continua com senha
-    if (roleSelecionado === role) return;
+      if (roleSelecionado) {
+        document.getElementById('card-' + roleSelecionado).classList.remove('card--active');
+        document.getElementById('pwd-' + roleSelecionado).classList.remove('pwd--open');
+        document.getElementById('err-' + roleSelecionado).classList.remove('err--visible');
+        document.getElementById('input-' + roleSelecionado).value = '';
+      }
 
-    if (roleSelecionado) {
-      document.getElementById('card-' + roleSelecionado).classList.remove('card--active');
-      document.getElementById('pwd-' + roleSelecionado).classList.remove('pwd--open');
-      document.getElementById('err-' + roleSelecionado).classList.remove('err--visible');
-      document.getElementById('input-' + roleSelecionado).value = '';
-    }
+      roleSelecionado = role;
 
-    roleSelecionado = role;
-    this.classList.add('card--active');
+      this.classList.add('card--active');
 
-    document.querySelectorAll('.card').forEach(function(c) {
-      if (c.dataset.role !== role) c.classList.add('card--dimmed');
-      else c.classList.remove('card--dimmed');
+      document.querySelectorAll('.card').forEach(function(c) {
+        if (c.dataset.role !== role) c.classList.add('card--dimmed');
+        else c.classList.remove('card--dimmed');
+      });
+
+      document.getElementById('pwd-' + role).classList.add('pwd--open');
+
+      setTimeout(function() {
+        document.getElementById('input-' + role).focus();
+      }, 320);
     });
-
-    document.getElementById('pwd-' + role).classList.add('pwd--open');
-
-    setTimeout(function() {
-      document.getElementById('input-' + role).focus();
-    }, 320);
-
   });
-});
 
-  // Enter no input
+  // ENTER NO ADMIN
   document.querySelectorAll('.pwd-input').forEach(function(input) {
     input.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
@@ -723,44 +692,69 @@ document.querySelectorAll('.card').forEach(function(card) {
 
   function doLogin(e, role) {
     e.stopPropagation();
+
     const input = document.getElementById('input-' + role);
     const errEl = document.getElementById('err-' + role);
     const card  = document.getElementById('card-' + role);
 
     if (input.value === SENHAS[role]) {
-      sessionStorage.setItem('ssm_role', role);
-
-      // Fade out tela de login
-      const loginScreen = document.getElementById('screen-login');
-      loginScreen.style.animation = 'fadeOut .45s ease forwards';
-
-      setTimeout(function() {
-        loginScreen.style.display = 'none';
-
-        // Mostra tela de boas-vindas
-        const ws = document.getElementById('ws-' + role);
-        ws.classList.add('ws--visible');
-
-        // Barra de progresso
-        const bar = document.getElementById('bar-' + role);
-        bar.style.animation = 'barFill 2.6s ease forwards';
-
-        // Redireciona após a animação
-        setTimeout(function() {
-          window.location.href = 'index.html';
-        }, 2800);
-      }, 480);
-
+      iniciarSistema(role);
     } else {
-      // Senha errada
       errEl.classList.add('err--visible');
       card.classList.add('card--shake');
+
       input.value = '';
       input.focus();
 
-      setTimeout(function() { card.classList.remove('card--shake'); }, 580);
-      setTimeout(function() { errEl.classList.remove('err--visible'); }, 3200);
+      setTimeout(() => {
+        card.classList.remove('card--shake');
+      }, 580);
+
+      setTimeout(() => {
+        errEl.classList.remove('err--visible');
+      }, 3200);
     }
+  }
+
+  // FUNÇÃO DE ABERTURA
+  function iniciarSistema(role) {
+
+    sessionStorage.setItem('ssm_role', role);
+
+    const loginScreen = document.getElementById('screen-login');
+
+    loginScreen.style.animation = 'fadeOut .45s ease forwards';
+
+    setTimeout(function() {
+
+      loginScreen.style.display = 'none';
+
+      const ws = document.getElementById('ws-' + role);
+
+      ws.classList.add('ws--visible');
+
+      const bar = document.getElementById('bar-' + role);
+
+      bar.style.animation = 'barFill 2.6s ease forwards';
+
+      setTimeout(function() {
+
+        // REDIRECIONAMENTO
+        if (role === 'operador') {
+          window.location.href = 'solicitarRota.html';
+        }
+
+        else if (role === 'almoxarife') {
+          window.location.href = 'almoxarifado.html';
+        }
+
+        else {
+          window.location.href = 'index.html';
+        }
+
+      }, 2800);
+
+    }, 480);
   }
 </script>
 </body>
