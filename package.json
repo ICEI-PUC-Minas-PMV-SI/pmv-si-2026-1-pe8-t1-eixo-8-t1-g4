@@ -1,21 +1,12 @@
 {
-  "linha": "Linha A",
-  "materiais": {
-    "cartucho": 10,
-    "bula": 5,
-    "rotulo": 2,
-    "caixa": 3
-  },
-  "observacoes": "Urgente",
-  "status": "pendente",
-  "solicitante": "petronio neves",
-  "dataSolicitacao": "2026-03-27T10:00:00",
-  "dataAtendimento": null,
   "name": "controle-de-rotas-flxpen-packaging---eixo-8",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js",
+    "dev:mem": "node backend/server-dev.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

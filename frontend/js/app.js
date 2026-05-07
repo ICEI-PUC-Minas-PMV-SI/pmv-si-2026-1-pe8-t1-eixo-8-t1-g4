@@ -1,3 +1,14 @@
+// Pré-preenchimento via URL params (vindo da calculadora)
+(function () {
+  var params = new URLSearchParams(window.location.search);
+  ['cartucho', 'bula', 'rotulo', 'caixa'].forEach(function (id) {
+    if (params.has(id)) {
+      var el = document.getElementById(id);
+      if (el) el.value = Math.max(0, parseInt(params.get(id), 10) || 0);
+    }
+  });
+})();
+
 // === ALERTAS DE PROBLEMA ===
 async function carregarAlertas() {
   try {
