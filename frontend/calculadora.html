@@ -48,110 +48,131 @@
 
 <div class="main">
   <div class="page-header">
-    <h1>Calculadora de Produção</h1>
-    <p>Informe o estoque disponível e veja quantas canetas você consegue produzir na próxima hora</p>
+    <h1>Calculadora de Materiais</h1>
+    <p>Estimativa automática de materiais necessários para 1 hora de produção</p>
   </div>
 
-  <!-- Inputs de estoque -->
-  <div class="form-section">
-    <div class="form-section-title">Estoque disponível agora</div>
-    <div class="materials-list">
-
-      <div class="material-row">
-        <div class="material-info">
-          <img src="./img/cartucho.png" alt="Cartucho">
-          <div>
-            <span class="material-name">Cartuchos</span>
-            <span class="calc-mat-detalhe">400 cartuchos/caixa · 5 canetas/cartucho</span>
-          </div>
-        </div>
-        <div class="qty-control">
-          <button type="button" class="qty-btn" onclick="menos('cartucho')">−</button>
-          <input type="number" id="cartucho" class="qty-input" value="0" min="0">
-          <button type="button" class="qty-btn qty-btn--plus" onclick="mais('cartucho')">+</button>
-          <span class="qty-unit">caixas</span>
-        </div>
-      </div>
-
-      <div class="material-row">
-        <div class="material-info">
-          <img src="./img/bula.png" alt="Bula">
-          <div>
-            <span class="material-name">Bulas</span>
-            <span class="calc-mat-detalhe">550 bulas/caixa · 1 bula/cartucho</span>
-          </div>
-        </div>
-        <div class="qty-control">
-          <button type="button" class="qty-btn" onclick="menos('bula')">−</button>
-          <input type="number" id="bula" class="qty-input" value="0" min="0">
-          <button type="button" class="qty-btn qty-btn--plus" onclick="mais('bula')">+</button>
-          <span class="qty-unit">caixas</span>
-        </div>
-      </div>
-
-      <div class="material-row">
-        <div class="material-info">
-          <img src="./img/rotulo.png" alt="Rótulo">
-          <div>
-            <span class="material-name">Rótulos</span>
-            <span class="calc-mat-detalhe">12.990 rótulos/bobina · 1 rótulo/caneta</span>
-          </div>
-        </div>
-        <div class="qty-control">
-          <button type="button" class="qty-btn" onclick="menos('rotulo')">−</button>
-          <input type="number" id="rotulo" class="qty-input" value="0" min="0">
-          <button type="button" class="qty-btn qty-btn--plus" onclick="mais('rotulo')">+</button>
-          <span class="qty-unit">bobinas</span>
-        </div>
-      </div>
-
-      <div class="material-row">
-        <div class="material-info">
-          <img src="./img/caixa.png" alt="Caixa de Embarque">
-          <div>
-            <span class="material-name">Caixas de Embarque</span>
-            <span class="calc-mat-detalhe">25 caixas/fardo · 25 canetas/caixa</span>
-          </div>
-        </div>
-        <div class="qty-control">
-          <button type="button" class="qty-btn" onclick="menos('caixa')">−</button>
-          <input type="number" id="caixa" class="qty-input" value="0" min="0">
-          <button type="button" class="qty-btn qty-btn--plus" onclick="mais('caixa')">+</button>
-          <span class="qty-unit">fardos</span>
-        </div>
-      </div>
-
+  <!-- Banner produção máxima -->
+  <div class="calc-banner">
+    <div class="calc-banner-icon">!</div>
+    <div>
+      <div class="calc-banner-title">Produção máxima considerada</div>
+      <div class="calc-banner-sub">Os cálculos desta tela são baseados na produção máxima de <strong>22.500 canetas por hora</strong>.</div>
     </div>
   </div>
 
-  <!-- Resultado -->
-  <div class="form-section">
-    <div class="form-section-title">Capacidade de produção — próxima hora</div>
-    <div class="calc-resultado-card">
-      <div class="calc-resultado-numero" id="resultProducao">
-        <span style="font-size:32px;color:var(--text-muted)">Informe o estoque disponível</span>
+  <!-- Grid de materiais -->
+  <div class="form-section-title" style="margin-bottom:14px;">Materiais necessários</div>
+  <div class="calc-cards-grid">
+
+    <!-- Cartucho -->
+    <div class="calc-mat-card">
+      <div class="calc-mat-card-header">
+        <div class="calc-mat-card-title">
+          <img src="./img/cartucho.png" alt="Cartucho" class="calc-mat-icon">
+          Cartuchos
+        </div>
+        <span class="calc-necessario-label">Necessário: <strong id="nec-cartucho">—</strong></span>
       </div>
-      <div id="resultBarra"></div>
+      <div class="calc-mat-card-body">
+        <div class="calc-field-group">
+          <label class="calc-field-label">Existente na linha</label>
+          <input type="number" id="existente-cartucho" class="calc-field-input" value="0" min="0" placeholder="0">
+        </div>
+        <div class="calc-arrow">→</div>
+        <div class="calc-field-group">
+          <label class="calc-field-label">Solicitar</label>
+          <input type="number" id="solicitar-cartucho" class="calc-field-input calc-field-result" readonly value="0">
+        </div>
+      </div>
+      <div class="calc-mat-unit">caixas (400 cartuchos/cx · 5 canetas/cartucho)</div>
     </div>
+
+    <!-- Bula -->
+    <div class="calc-mat-card">
+      <div class="calc-mat-card-header">
+        <div class="calc-mat-card-title">
+          <img src="./img/bula.png" alt="Bula" class="calc-mat-icon">
+          Bulas
+        </div>
+        <span class="calc-necessario-label">Necessário: <strong id="nec-bula">—</strong></span>
+      </div>
+      <div class="calc-mat-card-body">
+        <div class="calc-field-group">
+          <label class="calc-field-label">Existente na linha</label>
+          <input type="number" id="existente-bula" class="calc-field-input" value="0" min="0" placeholder="0">
+        </div>
+        <div class="calc-arrow">→</div>
+        <div class="calc-field-group">
+          <label class="calc-field-label">Solicitar</label>
+          <input type="number" id="solicitar-bula" class="calc-field-input calc-field-result" readonly value="0">
+        </div>
+      </div>
+      <div class="calc-mat-unit">caixas (550 bulas/cx · 1 bula/cartucho)</div>
+    </div>
+
+    <!-- Rótulo -->
+    <div class="calc-mat-card">
+      <div class="calc-mat-card-header">
+        <div class="calc-mat-card-title">
+          <img src="./img/rotulo.png" alt="Rótulo" class="calc-mat-icon">
+          Rótulos
+        </div>
+        <span class="calc-necessario-label">Necessário: <strong id="nec-rotulo">—</strong></span>
+      </div>
+      <div class="calc-mat-card-body">
+        <div class="calc-field-group">
+          <label class="calc-field-label">Existente na linha</label>
+          <input type="number" id="existente-rotulo" class="calc-field-input" value="0" min="0" placeholder="0">
+        </div>
+        <div class="calc-arrow">→</div>
+        <div class="calc-field-group">
+          <label class="calc-field-label">Solicitar</label>
+          <input type="number" id="solicitar-rotulo" class="calc-field-input calc-field-result" readonly value="0">
+        </div>
+      </div>
+      <div class="calc-mat-unit">bobinas (12.990 rótulos/bobina · 1 rótulo/caneta)</div>
+    </div>
+
+    <!-- Caixa de Embarque -->
+    <div class="calc-mat-card">
+      <div class="calc-mat-card-header">
+        <div class="calc-mat-card-title">
+          <img src="./img/caixa.png" alt="Caixa" class="calc-mat-icon">
+          Fardos Caixa
+        </div>
+        <span class="calc-necessario-label">Necessário: <strong id="nec-caixa">—</strong></span>
+      </div>
+      <div class="calc-mat-card-body">
+        <div class="calc-field-group">
+          <label class="calc-field-label">Existente na linha</label>
+          <input type="number" id="existente-caixa" class="calc-field-input" value="0" min="0" placeholder="0">
+        </div>
+        <div class="calc-arrow">→</div>
+        <div class="calc-field-group">
+          <label class="calc-field-label">Solicitar</label>
+          <input type="number" id="solicitar-caixa" class="calc-field-input calc-field-result" readonly value="0">
+        </div>
+      </div>
+      <div class="calc-mat-unit">fardos (25 caixas/fardo · 25 canetas/caixa)</div>
+    </div>
+
   </div>
 
-  <!-- Análise por material -->
-  <div class="form-section" id="secaoMateriais" style="display:none;">
-    <div class="form-section-title">Análise por material</div>
-    <div class="calc-result-grid" id="resultMateriais"></div>
+  <!-- Ações -->
+  <div style="display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;">
+    <button type="button" class="btn btn-primary" style="flex:1;min-width:200px;" onclick="calcular()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:17px;height:17px;"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 8h10M7 12h4M13 12h4M7 16h4M13 16h4"/></svg>
+      Calcular Materiais
+    </button>
+    <a id="btnSolicitar" href="solicitarRota.html" class="btn btn-accent" style="flex:1;min-width:200px;text-align:center;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:17px;height:17px;"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      Usar na Solicitação
+    </a>
   </div>
 
 </div>
 
 <script src="./js/calculadora.js"></script>
-<script>
-  // Mostra/oculta seção de análise conforme houver dados
-  const observer = new MutationObserver(() => {
-    const secao = document.getElementById('secaoMateriais');
-    const temConteudo = document.getElementById('resultMateriais').innerHTML.trim() !== '';
-    secao.style.display = temConteudo ? '' : 'none';
-  });
-  observer.observe(document.getElementById('resultMateriais'), { childList: true });
-</script>
 </body>
 </html>
