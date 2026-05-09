@@ -13,9 +13,9 @@
 
   // Permissões por perfil
   var acesso = {
-    operador:   ['index.html', 'solicitarRota.html', 'calculadora.html', 'historico.html'],
+    operador:   ['index.html', 'solicitarMateriais.html' ,'solicitarRota.html', 'calculadora.html', 'historico.html'],
     almoxarife: ['index.html', 'almoxarifado.html',  'historico.html', 'relatorios.html'],
-    admin:      ['index.html', 'solicitarRota.html', 'calculadora.html', 'almoxarifado.html', 'historico.html', 'relatorios.html']
+    admin:      ['index.html', 'solicitarMateriais.html','solicitarRota.html', 'calculadora.html', 'almoxarifado.html', 'historico.html', 'relatorios.html']
   };
 
   var pagina = window.location.pathname.split('/').pop() || 'index.html';
@@ -41,6 +41,8 @@
       if (linkSolicitar) linkSolicitar.style.display = 'none';
       var linkCalc = document.querySelector('a[href="calculadora.html"]');
       if (linkCalc) linkCalc.style.display = 'none';
+      var linkSolicitarMat = document.querySelector('a[href="solicitarMateriais.html"]');
+      if (linkSolicitarMat) linkSolicitarMat.style.display = 'none';  
     }
     if (role !== 'almoxarife' && role !== 'admin') {
       var linkAlmox = document.querySelector('a[href="almoxarifado.html"]');
