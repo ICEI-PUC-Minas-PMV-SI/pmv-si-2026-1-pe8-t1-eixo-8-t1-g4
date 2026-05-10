@@ -55,10 +55,13 @@ function renderCard(s) {
   const sc = statusClass(s.status);
   const materiais = s.materiais || {};
   const tags = [
-    materiais.cartucho > 0 ? `Cartucho: ${materiais.cartucho}` : '',
-    materiais.bula > 0 ? `Bula: ${materiais.bula}` : '',
-    materiais.rotulo > 0 ? `Rótulo: ${materiais.rotulo}` : '',
-    materiais.caixa > 0 ? `Caixa: ${materiais.caixa}` : '',
+    materiais.cartucho     > 0 ? `Cartucho: ${materiais.cartucho}`           : '',
+    materiais.bula         > 0 ? `Bula: ${materiais.bula}`                   : '',
+    materiais.rotulo       > 0 ? `Rótulo: ${materiais.rotulo}`               : '',
+    materiais.caixa        > 0 ? `Caixa: ${materiais.caixa}`                 : '',
+    materiais.palletMadeira > 0 ? `Pallet Madeira: ${materiais.palletMadeira}` : '',
+    materiais.flexpen      > 0 ? `FlexPen: ${materiais.flexpen}`             : '',
+    materiais.palletTPU    > 0 ? `Pallet TPU: ${materiais.palletTPU}`        : '',
   ].filter(Boolean).map(t => `<span class="material-tag">${t}</span>`).join('');
 
   const data = new Date(s.dataSolicitacao).toLocaleString('pt-BR');

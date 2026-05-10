@@ -166,7 +166,7 @@ function calcular() {
     'btnSolicitar'
   ).href =
 
-    'solicitarRota.html?' +
+    'solicitarMateriais.html?' +
 
     'cartucho=' + solicitarCartucho +
 

@@ -545,6 +545,10 @@
         <div class="card-pwd" id="pwd-admin">
           <div class="pwd-inner" onclick="event.stopPropagation()">
             <input type="password" id="input-admin" class="pwd-input" placeholder="Senha..." autocomplete="off">
+            <button class="pwd-btn" style="background:rgba(255,255,255,.12);" title="Cancelar"
+                    onclick="cancelarAdmin(event)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" style="width:16px;height:16px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
             <button class="pwd-btn" style="background:linear-gradient(135deg,#b45309,#f59e0b);"
                     onclick="doLogin(event,'admin')">
               <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" style="width:16px;height:16px;"><polyline points="9 18 15 12 9 6"/></svg>
@@ -653,8 +657,11 @@
         return;
       }
 
-      // ADMIN COM SENHA
-      if (roleSelecionado === role) return;
+      // ADMIN COM SENHA — clica de novo cancela
+      if (roleSelecionado === role) {
+        cancelarAdmin(null);
+        return;
+      }
 
       if (roleSelecionado) {
         document.getElementById('card-' + roleSelecionado).classList.remove('card--active');
@@ -688,6 +695,26 @@
         doLogin(e, role);
       }
     });
+  });
+
+  function cancelarAdmin(e) {
+    if (e) e.stopPropagation();
+    if (!roleSelecionado) return;
+
+    document.getElementById('card-' + roleSelecionado).classList.remove('card--active');
+    document.getElementById('pwd-'  + roleSelecionado).classList.remove('pwd--open');
+    document.getElementById('err-'  + roleSelecionado).classList.remove('err--visible');
+    document.getElementById('input-'+ roleSelecionado).value = '';
+
+    document.querySelectorAll('.card').forEach(function(c) {
+      c.classList.remove('card--dimmed');
+    });
+
+    roleSelecionado = null;
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && roleSelecionado) cancelarAdmin(null);
   });
 
   function doLogin(e, role) {
@@ -741,7 +768,7 @@
 
         // REDIRECIONAMENTO
         if (role === 'operador') {
-          window.location.href = 'solicitarRota.html';
+          window.location.href = 'solicitarMateriais.html';
         }
 
         else if (role === 'almoxarife') {
