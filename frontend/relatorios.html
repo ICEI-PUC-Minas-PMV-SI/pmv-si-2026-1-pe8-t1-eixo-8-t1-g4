@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Relatórios — SSM</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230072ce'/><text x='50%25' y='50%25' text-anchor='middle' dominant-baseline='central' font-family='system-ui' font-weight='900' font-size='10' fill='white'>SSM</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="./css/style.css">
   <style>
     /* === RELATÓRIOS === */
@@ -325,6 +328,21 @@
   let todasSolicitacoes = [];
   let solicitacoesFiltradas = [];
 
+  function showToast(message, type) {
+    var c = document.getElementById('toastContainerRel');
+    if (!c) {
+      c = document.createElement('div');
+      c.id = 'toastContainerRel';
+      c.className = 'toast-container';
+      document.body.appendChild(c);
+    }
+    var t = document.createElement('div');
+    t.className = 'toast toast--' + (type || 'info');
+    t.innerHTML = '<span class="toast-icon">' + (type === 'error' ? '✕' : 'ℹ') + '</span><span>' + message + '</span><span class="toast-close" onclick="this.parentElement.remove()">×</span>';
+    c.appendChild(t);
+    setTimeout(function() { if (t.parentNode) t.remove(); }, 5000);
+  }
+
   // === Carrega dados ===
   async function carregar() {
     try {
@@ -334,7 +352,7 @@
       aplicarFiltros();
     } catch (err) {
       document.getElementById('kpiTotal').textContent = '—';
-      alert('Erro ao conectar com o servidor. Verifique se o backend está rodando.');
+      showToast('Erro ao conectar com o servidor. Verifique se o backend está rodando.', 'error');
     }
   }
 
@@ -513,7 +531,7 @@
   // === Exportar CSV ===
   function exportarCSV() {
     if (solicitacoesFiltradas.length === 0) {
-      alert('Não há dados para exportar com os filtros atuais.');
+      showToast('Não há dados para exportar com os filtros atuais.', 'info');
       return;
     }
     const cabecalho = [

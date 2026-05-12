@@ -1,6 +1,8 @@
 let todasSolicitacoes = [];
 let filtroAtivo = 'todas';
 let _problemaTargetId = null;
+let _refreshCountdown = 30;
+let _countdownInterval = null;
 
 async function loadSolicitacoes() {
   try {
@@ -10,6 +12,8 @@ async function loadSolicitacoes() {
     todasSolicitacoes.sort((a, b) => new Date(b.dataSolicitacao) - new Date(a.dataSolicitacao));
     atualizarContadores();
     renderLista();
+    const lastUpEl = document.getElementById('lastUpdate');
+    if (lastUpEl) lastUpEl.textContent = new Date().toLocaleTimeString('pt-BR');
   } catch (err) {
     showToast('Erro ao conectar com o servidor', 'error');
   }
@@ -164,7 +168,7 @@ async function confirmarProblema() {
     });
     if (!res.ok) throw new Error();
     fecharModal();
-    showToast('Problema reportado ao solicitante!', 'error');
+    showToast('Problema reportado ao solicitante.', 'info');
     loadSolicitacoes();
   } catch {
     showToast('Erro ao reportar problema', 'error');
@@ -200,6 +204,29 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 
 document.getElementById('btnAtualizar').addEventListener('click', loadSolicitacoes);
 
-setInterval(loadSolicitacoes, 30000);
+function iniciarCountdown() {
+  _refreshCountdown = 30;
+  if (_countdownInterval) clearInterval(_countdownInterval);
+  atualizarBarraContagem();
+  _countdownInterval = setInterval(function() {
+    _refreshCountdown--;
+    atualizarBarraContagem();
+    if (_refreshCountdown <= 0) {
+      loadSolicitacoes();
+      _refreshCountdown = 30;
+    }
+  }, 1000);
+}
+
+function atualizarBarraContagem() {
+  var barra = document.getElementById('refreshBarFill');
+  if (barra) {
+    barra.style.width = ((_refreshCountdown / 30) * 100) + '%';
+  }
+  var countEl = document.getElementById('refreshCountdown');
+  if (countEl) countEl.textContent = _refreshCountdown + 's';
+}
+
+iniciarCountdown();
 
 loadSolicitacoes();

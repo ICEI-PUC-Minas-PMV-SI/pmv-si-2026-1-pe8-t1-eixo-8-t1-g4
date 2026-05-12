@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <title>Início — SSM</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230072ce'/><text x='50%25' y='50%25' text-anchor='middle' dominant-baseline='central' font-family='system-ui' font-weight='900' font-size='10' fill='white'>SSM</text></svg>">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -48,8 +52,22 @@
 
   <div class="main">
     <div class="page-header">
-      <h1>Sistema de Solicitação de Materiais</h1>
-      <p>FlexPen Packaging — Novo Nordisk</p>
+      <div class="page-header-row">
+        <div>
+          <h1>Sistema de Solicitação de Materiais</h1>
+          <p>FlexPen Packaging — Novo Nordisk</p>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+          <button class="btn btn-ghost" id="btnRefreshIndex" style="font-size:13px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+            Atualizar
+          </button>
+          <span class="last-update" id="lastUpdateIndex" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Atualizado às <span id="lastUpdateTime">—</span>
+          </span>
+        </div>
+      </div>
     </div>
 
     <div class="stats-grid">
@@ -101,22 +119,34 @@
   </div>
 
   <script>
-    fetch('http://localhost:3000/solicitacoes')
-      .then(r => r.json())
-      .then(lista => {
-        document.getElementById('countPendentes').textContent =
-          lista.filter(s => s.status === 'pendente').length;
-        document.getElementById('countProgresso').textContent =
-          lista.filter(s => s.status === 'em progresso').length;
-        document.getElementById('countConcluidas').textContent =
-          lista.filter(s => s.status === 'concluída').length;
-        document.getElementById('countJustificadas').textContent =
-          lista.filter(s => s.status === 'justificada').length;
-      })
-      .catch(() => {
-        ['countPendentes', 'countProgresso', 'countConcluidas', 'countJustificadas']
-          .forEach(id => document.getElementById(id).textContent = '—');
-      });
+    function atualizarStats() {
+      document.getElementById('btnRefreshIndex').disabled = true;
+      fetch('http://localhost:3000/solicitacoes')
+        .then(r => r.json())
+        .then(lista => {
+          document.getElementById('countPendentes').textContent =
+            lista.filter(s => s.status === 'pendente').length;
+          document.getElementById('countProgresso').textContent =
+            lista.filter(s => s.status === 'em progresso').length;
+          document.getElementById('countConcluidas').textContent =
+            lista.filter(s => s.status === 'concluída').length;
+          document.getElementById('countJustificadas').textContent =
+            lista.filter(s => s.status === 'justificada').length;
+          var now = new Date().toLocaleTimeString('pt-BR');
+          document.getElementById('lastUpdateTime').textContent = now;
+          document.getElementById('lastUpdateIndex').style.display = 'flex';
+        })
+        .catch(() => {
+          ['countPendentes', 'countProgresso', 'countConcluidas', 'countJustificadas']
+            .forEach(id => document.getElementById(id).textContent = '—');
+        })
+        .finally(() => {
+          document.getElementById('btnRefreshIndex').disabled = false;
+        });
+    }
+
+    atualizarStats();
+    document.getElementById('btnRefreshIndex').addEventListener('click', atualizarStats);
   </script>
 
 </body>
